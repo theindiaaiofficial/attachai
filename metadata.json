@@ -1,0 +1,6 @@
+{
+  "name": "Orbit AI — Multi-Tenant Customer Support & RAG Platform",
+  "description": "Production multi-tenant AI customer support SaaS platform with natural multilingual conversational intelligence, 128-dim grounded RAG, persistent multi-turn memory, lead workflow, and embeddable widget.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

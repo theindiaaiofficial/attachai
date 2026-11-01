@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: orbit-ai
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /ready
+    envVars:
+      - key: APP_ENV
+        value: production
+
+      # Core Origin Configuration (Only variables needed for initial deployment)
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+      - key: CORS_ORIGINS
+        sync: false
+
+      # Built-in Zero-Credential Core Providers (Automatically used when optional keys are omitted)
+      - key: DATABASE_PROVIDER
+        value: sqlite
+
+      - key: STORAGE_PROVIDER
+        value: local
+
+      - key: VECTOR_PROVIDER
+        value: local
+
+      - key: EMBEDDING_PROVIDER
+        value: local
+
+      - key: EMBEDDING_DIMENSIONS
+        value: "128"
+
+      - key: SUPABASE_VECTOR_DIMENSIONS
+        value: "128"
+
+      - key: LLM_PROVIDER_TYPE
+        value: local
+
+      - key: NOTIFICATION_PROVIDER
+        value: outbox
+
+      - key: ORBIT_RAG_DIAGNOSTICS
+        value: "0"
+

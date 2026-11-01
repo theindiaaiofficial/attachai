@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orbit AI — Administrator Login</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Orbit AI Administrator Login</h1>
+      <form id="orbit-admin-login-form" method="post" action="/admin/api/login">
+        <label for="admin-api-key">Administrator Access Key</label>
+        <input id="admin-api-key" name="apiKey" type="password" required autocomplete="off" />
+        <button type="submit">Sign In</button>
+      </form>
+    </main>
+  </body>
+</html>

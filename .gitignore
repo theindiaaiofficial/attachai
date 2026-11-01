@@ -1,0 +1,31 @@
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment & Secrets
+.env
+.env.local
+.env.production
+
+# Local runtime storage & SQLite artifacts
+data/
+*.db
+*.sqlite
+*.sqlite3
+uploads/
+storage_local/
+
+# Node / Preview artifacts
+node_modules/
+dist/
+.playwright-cli/
+.aistudio/
+public/assets/
+*.log

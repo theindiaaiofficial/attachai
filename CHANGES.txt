@@ -1,0 +1,50 @@
+ORBIT AI — COMPLETE REPOSITORY & UPGRADE MANIFEST (CHANGES.txt)
+Branch: fix/natural-conversational-intelligence
+
+Added / Updated Files:
+- supabase/migrations/0001_initial.sql       Complete idempotent baseline SQL migration (defines public.set_updated_at() before triggers, 15 tables, vector(128), match_knowledge_vectors RPC, RLS policies, private knowledge bucket)
+- supabase/migrations/0002_message_feedback.sql Additive idempotent migration for message_feedback and conversation language/memory columns
+- app/__init__.py                            Package root
+- app/main.py                                Unified FastAPI/ASGI & HTTP application + OrbitTestClient
+- app/lifespan.py                            Startup/shutdown lifespan handler
+- app/core/config.py                         Settings loader & startup validator (128-dim contract, optional Qdrant/SMTP/TTS/debug flags disabled by default)
+- app/core/dependencies.py                   Single ServiceContainer composition root
+- app/core/exceptions.py                     Structured domain & HTTP exceptions
+- app/core/logging.py                        Structured JSON logger with automatic PII & credential redaction
+- app/core/rate_limiter.py                   Per-IP and per-tenant sliding-window rate limiter
+- app/core/security.py                       Constant-time comparisons, SHA-256 API key hashing, signed admin session & CSRF tokens, domain allowlist verification
+- app/domain/enums.py                        EvidenceState, ConversationIntent, KnowledgeStatus, LeadStatus, FeedbackRating enums
+- app/domain/models.py                       Canonical domain dataclasses matching SQL tables
+- app/domain/types.py                        Domain type aliases
+- app/repositories/base.py                   Abstract BaseRepository interface
+- app/repositories/sqlite.py                 Thread-safe SQLiteRepository with strict tenant scoping
+- app/repositories/supabase.py               SupabaseRepository with table & match_knowledge_vectors RPC readiness verification
+- app/providers/database.py                  Database repository factory
+- app/providers/embeddings.py                Deterministic 128-dim local embeddings + optional OpenAI-compatible embeddings with batch dimension checks
+- app/providers/storage.py                   LocalStorage + SupabaseStorage with paginated object listing and tenant deletion
+- app/providers/vector.py                    LocalVector + SupabaseVector (match_knowledge_vectors RPC) + optional QdrantVector with staged versioned indexing
+- app/providers/llm.py                       LocalConversationalLlm + OpenAICompatibleLlm with bounded retries, timeout handling, and circuit breaker cooldown
+- app/providers/notifications.py             Outbox, Supabase, and optional SMTP notification adapters
+- app/providers/tts.py                       Optional server-only TTS configuration adapter
+- app/services/clients.py                    Multi-tenant lifecycle, API key rotation, domain management, and prompt versioning
+- app/services/parser.py                     PDF (startxref validated), DOCX (OOXML validated), CSV (RFC-4180), Markdown, and TXT parser + valid test fixture builders
+- app/services/knowledge.py                  Safe versioned knowledge ingestion preserving previous active index on failure
+- app/services/advanced_rag.py               Follow-up resolution, multilingual query expansion, LLM query reformulation, RRF fusion, reranking, and SUPPORTED/PARTIAL/UNKNOWN evidence evaluation
+- app/services/grounding.py                  Numeric, price, date, contact, and guarantee grounding validator
+- app/services/conversations.py              Dynamic multilingual detection (English, Devanagari Hindi, Hinglish, Spanish, French), intent routing, bounded memory, rolling summaries, and message feedback
+- app/services/prompts.py                    Structured prompt builder and localized fallback helper
+- app/services/chat.py                       Shared conversational & grounded RAG orchestration for /v1/chat and /v1/chat/stream
+- app/services/leads.py                      Idempotent lead capture, workflow management, and CSV export
+- app/services/notifications.py              Notification outbox management and retry service
+- app/services/analytics.py                  Persisted usage, latency, and feedback analytics service
+- app/api/schemas.py                         Public widget and admin serializers
+- app/api/public.py                          /v1/config, /v1/chat, /v1/chat/stream, /v1/feedback, /v1/leads
+- app/api/admin.py                           /admin/api/* endpoints
+- app/api/system.py                          /health, /ready, /metrics
+- static/js/widget.js                        Embeddable vanilla JS widget with Like/Dislike feedback, Copy, Share, persistence, and idempotent lead form
+- static/css/widget.css                      Responsive dark/light widget stylesheet
+- static/js/dashboard.js                     Admin dashboard script
+- static/css/dashboard.css                   Admin dashboard stylesheet
+- public/demo.html                           Customer website widget embed demo page
+- tests/*                                    85 automated unit, integration, security, RAG, multilingual, widget, and E2E tests
+- render.yaml, requirements.txt, Dockerfile, .python-version, .env.example, pytest.ini, docs/*, README.md

@@ -1,0 +1,10 @@
+/* ORBIT AI — Admin Dashboard Stylesheet */
+body {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0f172a;
+  color: #f8fafc;
+}
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

@@ -119,36 +119,82 @@ class OrbitApplication:
             # 1. System endpoints
             if m == "GET" and path == "/health":
                 code, data = self.system_api.get_health()
-                return {"status_code": code, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                return {
+                    "status_code": code,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             if m == "GET" and path == "/ready":
                 code, data = self.system_api.get_ready()
-                return {"status_code": code, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                return {
+                    "status_code": code,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             if m == "GET" and path == "/metrics":
                 data = self.system_api.get_metrics(req_headers, req_cookies)
-                return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             # 2. Static & HTML routes
             if m == "GET" and path in ("/", "/admin"):
-                raw, ctype = self._read_project_file("app/templates/dashboard.html")
+                raw, ctype = self._read_project_file("dist/index.html")
                 resp_headers["Content-Type"] = ctype
-                return {"status_code": 200, "headers": resp_headers, "body": raw.decode("utf-8"), "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": raw.decode("utf-8"),
+                    "cookies": resp_cookies,
+                }
+
+            if m == "GET" and path.startswith("/assets/"):
+                asset_path = os.path.join("dist", path.lstrip("/"))
+                raw, ctype = self._read_project_file(asset_path)
+                resp_headers["Content-Type"] = ctype
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": raw.decode("utf-8"),
+                    "cookies": resp_cookies,
+                }
 
             if m == "GET" and path == "/admin/login":
                 raw, ctype = self._read_project_file("app/templates/login.html")
                 resp_headers["Content-Type"] = ctype
-                return {"status_code": 200, "headers": resp_headers, "body": raw.decode("utf-8"), "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": raw.decode("utf-8"),
+                    "cookies": resp_cookies,
+                }
 
             if m == "GET" and path == "/demo.html":
                 raw, ctype = self._read_project_file("public/demo.html")
                 resp_headers["Content-Type"] = ctype
-                return {"status_code": 200, "headers": resp_headers, "body": raw.decode("utf-8"), "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": raw.decode("utf-8"),
+                    "cookies": resp_cookies,
+                }
 
             if m == "GET" and path.startswith("/static/"):
                 raw, ctype = self._read_project_file(path.lstrip("/"))
                 resp_headers["Content-Type"] = ctype
-                return {"status_code": 200, "headers": resp_headers, "body": raw.decode("utf-8"), "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": raw.decode("utf-8"),
+                    "cookies": resp_cookies,
+                }
 
             # 3. Public v1 Widget APIs
             if m == "GET" and path == "/v1/config":
@@ -157,31 +203,66 @@ class OrbitApplication:
                     client_ip=client_ip,
                     expected_client_id=query_params.get("clientId"),
                 )
-                return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             if m == "POST" and path == "/v1/chat":
-                data = self.public_api.post_chat(req_headers, payload, client_ip=client_ip)
-                return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                data = self.public_api.post_chat(
+                    req_headers, payload, client_ip=client_ip
+                )
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             if m == "POST" and path == "/v1/chat/stream":
-                sse_gen = self.public_api.post_chat_stream(req_headers, payload, client_ip=client_ip)
+                sse_gen = self.public_api.post_chat_stream(
+                    req_headers, payload, client_ip=client_ip
+                )
                 sse_text = "".join(list(sse_gen))
                 resp_headers["Content-Type"] = "text/event-stream; charset=utf-8"
                 resp_headers["Cache-Control"] = "no-cache"
                 resp_headers["Connection"] = "keep-alive"
-                return {"status_code": 200, "headers": resp_headers, "body": sse_text, "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": sse_text,
+                    "cookies": resp_cookies,
+                }
 
             if m == "POST" and path == "/v1/feedback":
-                data = self.public_api.post_feedback(req_headers, payload, client_ip=client_ip)
-                return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                data = self.public_api.post_feedback(
+                    req_headers, payload, client_ip=client_ip
+                )
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             if m == "POST" and path == "/v1/leads":
-                data = self.public_api.post_leads(req_headers, payload, client_ip=client_ip)
-                return {"status_code": 201 if data.get("created") else 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                data = self.public_api.post_leads(
+                    req_headers, payload, client_ip=client_ip
+                )
+                return {
+                    "status_code": 201 if data.get("created") else 200,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             # 4. Admin APIs
             if m == "POST" and path == "/admin/api/login":
-                session_token, csrf_token = self.admin_api.login(str(payload.get("apiKey") or ""))
+                session_token, csrf_token = self.admin_api.login(
+                    str(payload.get("apiKey") or "")
+                )
                 resp_cookies["orbit_admin_session"] = session_token
                 return {
                     "status_code": 200,
@@ -192,15 +273,30 @@ class OrbitApplication:
 
             if m == "GET" and path == "/admin/api/overview":
                 data = self.admin_api.get_overview(req_headers, req_cookies)
-                return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             if m == "GET" and path == "/admin/api/tenants":
                 data = self.admin_api.list_tenants(req_headers, req_cookies)
-                return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             if m == "POST" and path == "/admin/api/tenants":
                 data = self.admin_api.create_tenant(req_headers, payload, req_cookies)
-                return {"status_code": 201, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                return {
+                    "status_code": 201,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             if path.startswith("/admin/api/tenants/"):
                 parts = [p for p in path.split("/") if p]
@@ -208,17 +304,45 @@ class OrbitApplication:
                 client_id = parts[3]
                 if len(parts) == 4:
                     if m == "GET":
-                        data = self.admin_api.get_tenant_detail(req_headers, client_id, req_cookies)
-                        return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                        data = self.admin_api.get_tenant_detail(
+                            req_headers, client_id, req_cookies
+                        )
+                        return {
+                            "status_code": 200,
+                            "headers": resp_headers,
+                            "body": data,
+                            "cookies": resp_cookies,
+                        }
                     if m in ("PATCH", "PUT"):
-                        data = self.admin_api.update_tenant(req_headers, client_id, payload, req_cookies)
-                        return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                        data = self.admin_api.update_tenant(
+                            req_headers, client_id, payload, req_cookies
+                        )
+                        return {
+                            "status_code": 200,
+                            "headers": resp_headers,
+                            "body": data,
+                            "cookies": resp_cookies,
+                        }
                     if m == "DELETE":
-                        data = self.admin_api.delete_tenant(req_headers, client_id, req_cookies)
-                        return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                        data = self.admin_api.delete_tenant(
+                            req_headers, client_id, req_cookies
+                        )
+                        return {
+                            "status_code": 200,
+                            "headers": resp_headers,
+                            "body": data,
+                            "cookies": resp_cookies,
+                        }
                 elif len(parts) == 5 and parts[4] == "duplicate" and m == "POST":
-                    data = self.admin_api.duplicate_tenant(req_headers, client_id, payload, req_cookies)
-                    return {"status_code": 201, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                    data = self.admin_api.duplicate_tenant(
+                        req_headers, client_id, payload, req_cookies
+                    )
+                    return {
+                        "status_code": 201,
+                        "headers": resp_headers,
+                        "body": data,
+                        "cookies": resp_cookies,
+                    }
                 elif len(parts) == 5 and parts[4] == "rotate-key" and m == "POST":
                     data = self.admin_api.rotate_key(
                         req_headers,
@@ -226,31 +350,80 @@ class OrbitApplication:
                         label=str(payload.get("label") or "Rotated Widget Key"),
                         cookies=req_cookies,
                     )
-                    return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                    return {
+                        "status_code": 200,
+                        "headers": resp_headers,
+                        "body": data,
+                        "cookies": resp_cookies,
+                    }
                 elif len(parts) == 5 and parts[4] == "domains":
                     if m == "POST":
-                        domains = self.container.client_service.add_domain(client_id, str(payload.get("domain") or ""))
-                        return {"status_code": 200, "headers": resp_headers, "body": {"domains": domains}, "cookies": resp_cookies}
+                        domains = self.container.client_service.add_domain(
+                            client_id, str(payload.get("domain") or "")
+                        )
+                        return {
+                            "status_code": 200,
+                            "headers": resp_headers,
+                            "body": {"domains": domains},
+                            "cookies": resp_cookies,
+                        }
                     if m == "DELETE":
-                        domains = self.container.client_service.remove_domain(client_id, str(payload.get("domain") or query_params.get("domain") or ""))
-                        return {"status_code": 200, "headers": resp_headers, "body": {"domains": domains}, "cookies": resp_cookies}
+                        domains = self.container.client_service.remove_domain(
+                            client_id,
+                            str(
+                                payload.get("domain")
+                                or query_params.get("domain")
+                                or ""
+                            ),
+                        )
+                        return {
+                            "status_code": 200,
+                            "headers": resp_headers,
+                            "body": {"domains": domains},
+                            "cookies": resp_cookies,
+                        }
                 elif len(parts) == 5 and parts[4] == "prompts" and m == "POST":
                     self.admin_api.authorize(req_headers, req_cookies, "POST")
                     version = self.container.client_service.save_prompt_version(
                         client_id=client_id,
-                        system_prompt=str(payload.get("systemPrompt") or payload.get("system_prompt") or ""),
-                        fallback_answer=payload.get("fallbackAnswer") or payload.get("fallback_answer"),
-                        welcome_message=payload.get("welcomeMessage") or payload.get("welcome_message"),
+                        system_prompt=str(
+                            payload.get("systemPrompt")
+                            or payload.get("system_prompt")
+                            or ""
+                        ),
+                        fallback_answer=payload.get("fallbackAnswer")
+                        or payload.get("fallback_answer"),
+                        welcome_message=payload.get("welcomeMessage")
+                        or payload.get("welcome_message"),
                         note=str(payload.get("note") or ""),
                     )
-                    return {"status_code": 201, "headers": resp_headers, "body": {"promptVersion": asdict(version)}, "cookies": resp_cookies}
-                elif len(parts) == 6 and parts[4] == "prompts" and parts[5] == "restore" and m == "POST":
+                    return {
+                        "status_code": 201,
+                        "headers": resp_headers,
+                        "body": {"promptVersion": asdict(version)},
+                        "cookies": resp_cookies,
+                    }
+                elif (
+                    len(parts) == 6
+                    and parts[4] == "prompts"
+                    and parts[5] == "restore"
+                    and m == "POST"
+                ):
                     self.admin_api.authorize(req_headers, req_cookies, "POST")
                     updated = self.container.client_service.restore_prompt_version(
                         client_id=client_id,
-                        version_number=int(payload.get("versionNumber") or payload.get("version_number") or 1),
+                        version_number=int(
+                            payload.get("versionNumber")
+                            or payload.get("version_number")
+                            or 1
+                        ),
                     )
-                    return {"status_code": 200, "headers": resp_headers, "body": {"tenant": asdict(updated)}, "cookies": resp_cookies}
+                    return {
+                        "status_code": 200,
+                        "headers": resp_headers,
+                        "body": {"tenant": asdict(updated)},
+                        "cookies": resp_cookies,
+                    }
                 elif len(parts) == 5 and parts[4] == "knowledge" and m == "POST":
                     raw_content = payload.get("content")
                     if isinstance(raw_content, str):
@@ -267,15 +440,39 @@ class OrbitApplication:
                         mime_type=str(payload.get("mimeType") or "text/plain"),
                         cookies=req_cookies,
                     )
-                    return {"status_code": 201, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                    return {
+                        "status_code": 201,
+                        "headers": resp_headers,
+                        "body": data,
+                        "cookies": resp_cookies,
+                    }
                 elif len(parts) == 6 and parts[4] == "knowledge" and m == "DELETE":
                     file_id = parts[5]
-                    data = self.admin_api.delete_knowledge(req_headers, client_id, file_id, req_cookies)
-                    return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
-                elif len(parts) == 7 and parts[4] == "knowledge" and parts[6] == "rebuild" and m == "POST":
+                    data = self.admin_api.delete_knowledge(
+                        req_headers, client_id, file_id, req_cookies
+                    )
+                    return {
+                        "status_code": 200,
+                        "headers": resp_headers,
+                        "body": data,
+                        "cookies": resp_cookies,
+                    }
+                elif (
+                    len(parts) == 7
+                    and parts[4] == "knowledge"
+                    and parts[6] == "rebuild"
+                    and m == "POST"
+                ):
                     file_id = parts[5]
-                    data = self.admin_api.rebuild_knowledge(req_headers, client_id, file_id, req_cookies)
-                    return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                    data = self.admin_api.rebuild_knowledge(
+                        req_headers, client_id, file_id, req_cookies
+                    )
+                    return {
+                        "status_code": 200,
+                        "headers": resp_headers,
+                        "body": data,
+                        "cookies": resp_cookies,
+                    }
 
             if m == "GET" and path == "/admin/api/conversations":
                 data = self.admin_api.list_conversations(
@@ -284,13 +481,25 @@ class OrbitApplication:
                     search=query_params.get("search", ""),
                     cookies=req_cookies,
                 )
-                return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             if m == "GET" and path.startswith("/admin/api/conversations/"):
                 conv_id = path.rstrip("/").split("/")[-1]
                 client_id = query_params.get("clientId") or ""
-                data = self.admin_api.get_conversation_messages(req_headers, client_id, conv_id, req_cookies)
-                return {"status_code": 200, "headers": resp_headers, "body": data, "cookies": resp_cookies}
+                data = self.admin_api.get_conversation_messages(
+                    req_headers, client_id, conv_id, req_cookies
+                )
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": data,
+                    "cookies": resp_cookies,
+                }
 
             if m == "GET" and path == "/admin/api/leads":
                 self.admin_api.authorize(req_headers, req_cookies, "GET")
@@ -299,7 +508,12 @@ class OrbitApplication:
                     status=query_params.get("status"),
                     search=query_params.get("search", ""),
                 )
-                return {"status_code": 200, "headers": resp_headers, "body": {"leads": [asdict(l) for l in leads]}, "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": {"leads": [asdict(l) for l in leads]},
+                    "cookies": resp_cookies,
+                }
 
             if m == "GET" and path == "/admin/api/leads/export":
                 self.admin_api.authorize(req_headers, req_cookies, "GET")
@@ -308,12 +522,22 @@ class OrbitApplication:
                     status=query_params.get("status"),
                 )
                 resp_headers["Content-Type"] = "text/csv; charset=utf-8"
-                return {"status_code": 200, "headers": resp_headers, "body": csv_text, "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": csv_text,
+                    "cookies": resp_cookies,
+                }
 
             if m in ("PATCH", "PUT") and path.startswith("/admin/api/leads/"):
                 self.admin_api.authorize(req_headers, req_cookies, m)
                 lead_id = path.rstrip("/").split("/")[-1]
-                client_id = str(payload.get("clientId") or payload.get("client_id") or query_params.get("clientId") or "")
+                client_id = str(
+                    payload.get("clientId")
+                    or payload.get("client_id")
+                    or query_params.get("clientId")
+                    or ""
+                )
                 updated = self.container.lead_service.update_lead(
                     client_id=client_id,
                     lead_id=lead_id,
@@ -321,7 +545,12 @@ class OrbitApplication:
                     assignee=payload.get("assignee"),
                     notes=payload.get("notes"),
                 )
-                return {"status_code": 200, "headers": resp_headers, "body": {"lead": asdict(updated)}, "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": {"lead": asdict(updated)},
+                    "cookies": resp_cookies,
+                }
 
             if m == "GET" and path == "/admin/api/analytics":
                 self.admin_api.authorize(req_headers, req_cookies, "GET")
@@ -330,7 +559,12 @@ class OrbitApplication:
                     start_date=query_params.get("startDate"),
                     end_date=query_params.get("endDate"),
                 )
-                return {"status_code": 200, "headers": resp_headers, "body": summary, "cookies": resp_cookies}
+                return {
+                    "status_code": 200,
+                    "headers": resp_headers,
+                    "body": summary,
+                    "cookies": resp_cookies,
+                }
 
             raise NotFoundError(f"Route not found: {m} {path}")
 
@@ -345,15 +579,28 @@ class OrbitApplication:
             return {
                 "status_code": err.status_code,
                 "headers": resp_headers,
-                "body": {"error": {"code": err.code, "message": err.message, "details": err.details}},
+                "body": {
+                    "error": {
+                        "code": err.code,
+                        "message": err.message,
+                        "details": err.details,
+                    }
+                },
                 "cookies": resp_cookies,
             }
         except Exception as exc:
-            self.container.logger.error("http.unhandled_exception", path=path, error=str(exc))
+            self.container.logger.error(
+                "http.unhandled_exception", path=path, error=str(exc)
+            )
             return {
                 "status_code": 500,
                 "headers": resp_headers,
-                "body": {"error": {"code": "internal_error", "message": "An unexpected internal error occurred."}},
+                "body": {
+                    "error": {
+                        "code": "internal_error",
+                        "message": "An unexpected internal error occurred.",
+                    }
+                },
                 "cookies": resp_cookies,
             }
 
@@ -392,7 +639,12 @@ class OrbitTestClient:
             cookies=raw.get("cookies", {}),
         )
 
-    def get(self, path: str, headers: Optional[Dict[str, str]] = None, cookies: Optional[Dict[str, str]] = None) -> HttpResponseEnvelope:
+    def get(
+        self,
+        path: str,
+        headers: Optional[Dict[str, str]] = None,
+        cookies: Optional[Dict[str, str]] = None,
+    ) -> HttpResponseEnvelope:
         return self.request("GET", path, headers=headers, cookies=cookies)
 
     def post(
@@ -402,7 +654,9 @@ class OrbitTestClient:
         headers: Optional[Dict[str, str]] = None,
         cookies: Optional[Dict[str, str]] = None,
     ) -> HttpResponseEnvelope:
-        return self.request("POST", path, headers=headers, json_body=json, cookies=cookies)
+        return self.request(
+            "POST", path, headers=headers, json_body=json, cookies=cookies
+        )
 
     def patch(
         self,
@@ -411,7 +665,9 @@ class OrbitTestClient:
         headers: Optional[Dict[str, str]] = None,
         cookies: Optional[Dict[str, str]] = None,
     ) -> HttpResponseEnvelope:
-        return self.request("PATCH", path, headers=headers, json_body=json, cookies=cookies)
+        return self.request(
+            "PATCH", path, headers=headers, json_body=json, cookies=cookies
+        )
 
     def delete(
         self,
@@ -420,7 +676,9 @@ class OrbitTestClient:
         headers: Optional[Dict[str, str]] = None,
         cookies: Optional[Dict[str, str]] = None,
     ) -> HttpResponseEnvelope:
-        return self.request("DELETE", path, headers=headers, json_body=json, cookies=cookies)
+        return self.request(
+            "DELETE", path, headers=headers, json_body=json, cookies=cookies
+        )
 
 
 def create_app(container: Optional[ServiceContainer] = None) -> OrbitApplication:
